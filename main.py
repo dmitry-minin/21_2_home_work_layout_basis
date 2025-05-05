@@ -14,15 +14,12 @@ class MyServer(BaseHTTPRequestHandler):
     обработку входящих запросов от клиентов
     """
 
-
-def do_GET(self):
-
-
-    """ Метод для обработки входящих GET-запросов """
-    self.send_response(200)  # Отправка кода ответа
-    self.send_header("Content-type",
-                     "application/json")  # Отправка типа данных, который будет self.end_headers() # Завершение формирования заголовков ответа
-    self.wfile.write(bytes("{'message': 'OK'}", "utf-8"))  # Тело ответа
+    def do_GET(self):
+        """ Метод для обработки входящих GET-запросов """
+        self.send_response(200)  # Отправка кода ответа
+        self.send_header("Content-type",
+                         "application/json")  # Отправка типа данных, который будет self.end_headers() # Завершение формирования заголовков ответа
+        self.wfile.write(bytes("{'message': 'OK'}", "utf-8"))  # Тело ответа
 
 
 if __name__ == "__main__":
