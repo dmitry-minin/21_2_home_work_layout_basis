@@ -1,5 +1,6 @@
 # Импорт встроенной библиотеки для работы веб-сервера
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import os
 
 # Для начала определим настройки запуска
 hostName = "localhost"  # Адрес для доступа по сети
@@ -7,19 +8,32 @@ serverPort = 8080  # Порт для доступа по сети
 
 
 class MyServer(BaseHTTPRequestHandler):
-
-
-    """
-    Специальный класс, который отвечает за
-    обработку входящих запросов от клиентов
-    """
-
     def do_GET(self):
-        """ Метод для обработки входящих GET-запросов """
-        self.send_response(200)  # Отправка кода ответа
-        self.send_header("Content-type",
-                         "application/json")  # Отправка типа данных, который будет self.end_headers() # Завершение формирования заголовков ответа
-        self.wfile.write(bytes("{'message': 'OK'}", "utf-8"))  # Тело ответа
+        """Обработка входящих GET-запросов"""
+        if self.path == "/":
+            file_path = "html/contacts.html"
+        else:
+            file_path = self.path.lstrip("/")
+
+        if os.path.exists(file_path) and os.path.isfile(file_path):
+            # Определяем тип контента
+            if file_path.endswith(".css"):
+                content_type = "text/css"
+            elif file_path.endswith(".js"):
+                content_type = "application/javascript"
+            elif file_path.endswith(".html"):
+                content_type = "text/html"
+            else:
+                content_type = "application/octet-stream"
+
+            self.send_response(200)
+            self.send_header("Content-type", content_type)
+            self.end_headers()
+            with open(file_path, "rb") as file:
+                self.wfile.write(file.read())
+        else:
+            self.send_error(404, "File Not Found")
+
 
 
 if __name__ == "__main__":
